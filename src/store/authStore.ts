@@ -7,7 +7,7 @@ interface AuthState {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ user: User; session: Session }>;
-  signInWithGoogle: () => Promise<{ provider: string; url: string }>;
+  signInWithGoogle: () => Promise<void>;
   signUp: (username: string, email: string, password: string) => Promise<{ user: User | null; session: Session | null; error: any | null }>;
   verifyOTP: (email: string, token: string) => Promise<{ user: User | null; session: Session | null; error: any | null }>;
   signOut: () => Promise<void>;
@@ -162,7 +162,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         if (error) {
           console.error("Error handling OAuth callback:", error);
           set({ loading: false });
-          return false;
+          return;
         }
 
         if (data.session) {
@@ -193,7 +193,7 @@ useAuthStore.getState().checkUser();
 
 // Handle auth state changes
 supabase.auth.onAuthStateChange((event, session) => {
-  
+  const currentStoreState = useAuthStore.getState();
 
   switch (event) {
     case 'INITIAL_SESSION':
