@@ -39,7 +39,7 @@ const SignupPage = () => {
       }
 
       // Try to get user by email
-      const { data, error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: false,

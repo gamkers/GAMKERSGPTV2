@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Shield, Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,12 +6,12 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  
+    
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    
+        
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -37,11 +37,11 @@ const Header = () => {
             GamkersGPT
           </span>
         </div>
-        
+                
         <nav className="hidden md:flex items-center space-x-8">
           {['Features', 'Demo', 'Pricing', 'About'].map((item) => (
             <a 
-              key={item} 
+              key={item}
               href={`#${item.toLowerCase()}`}
               className="text-gray-300 hover:text-white transition-colors duration-200"
             >
@@ -55,7 +55,7 @@ const Header = () => {
             Get Started
           </button>
         </nav>
-        
+                
         <button 
           className="md:hidden text-gray-300 hover:text-white"
           onClick={toggleMobileMenu}
@@ -63,13 +63,13 @@ const Header = () => {
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-      
+            
       {mobileMenuOpen && (
         <div className="md:hidden bg-gray-900/95 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
             {['Features', 'Demo', 'Pricing', 'About'].map((item) => (
               <a 
-                key={item} 
+                key={item}
                 href={`#${item.toLowerCase()}`}
                 className="text-gray-300 hover:text-white transition-colors duration-200 py-2"
                 onClick={() => setMobileMenuOpen(false)}

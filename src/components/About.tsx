@@ -1,10 +1,7 @@
-import React from 'react';
+
 import { 
-  Brain, 
+
   Shield, 
-  Target, 
-  Users, 
-  Cpu,
   Newspaper,
   Terminal,
   Search,

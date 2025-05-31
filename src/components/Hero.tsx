@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Shield, ChevronRight, Terminal } from 'lucide-react';
 import TerminalAnimation from './TerminalAnimation';
 import { useNavigate } from 'react-router-dom';
