@@ -15,6 +15,7 @@ const SignupPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
+  // Rate limiting states
   const [resendAttempts, setResendAttempts] = useState(0);
   const [canResend, setCanResend] = useState(true);
   const [cooldownEndTime, setCooldownEndTime] = useState(0);
@@ -23,49 +24,32 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const { signUp, verifyOTP } = useAuthStore();
 
+  // Rate limit intervals in milliseconds
   const RATE_LIMITS = [
     30 * 1000,      // 30 seconds for first attempt
     5 * 60 * 1000,  // 5 minutes for second attempt
     12 * 60 * 60 * 1000 // 12 hours for third and subsequent attempts
   ];
 
+  // Check if user exists
   const checkUserExists = async (email: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      // If there's a current user, they exist
-      if (user?.email === email) {
-        return { exists: true, needsVerification: false };
-      }
-
-      // Try to get user by email
-      const { error } = await supabase.auth.signInWithOtp({
+      const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: false,
         }
       });
-
+      
       if (error) {
-        // Check specific error messages
-        if (error.message.includes('User already registered')) {
-          return { exists: true, needsVerification: false };
-        }
         if (error.message.includes('Email not confirmed')) {
           return { exists: true, needsVerification: true };
         }
+        if (error.message.includes('User already registered')) {
+          return { exists: true, needsVerification: false };
+        }
       }
-
-      // Additional check for existing user
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password: 'dummy-password-for-check'
-      });
-
-      if (!signInError || signInData.user) {
-        return { exists: true, needsVerification: false };
-      }
-
+      
       return { exists: false, needsVerification: false };
     } catch (err) {
       console.error('Error checking user:', err);
@@ -73,6 +57,7 @@ const SignupPage = () => {
     }
   };
 
+  // Update countdown timer
   useEffect(() => {
     if (!canResend && cooldownEndTime > 0) {
       const interval = setInterval(() => {
@@ -125,14 +110,10 @@ const SignupPage = () => {
           }
         }
 
-        // Only proceed with signup if user doesn't exist
-        const { error: signUpError } = await signUp(username, email, password);
-        if (signUpError) {
-          throw signUpError;
-        }
-
+        await signUp(username, email, password);
         setShowOtpInput(true);
         setError('');
+        // Reset rate limiting when moving to OTP step
         setResendAttempts(0);
         setCanResend(true);
         setCooldownEndTime(0);
@@ -152,6 +133,7 @@ const SignupPage = () => {
     try {
       const now = Date.now();
       
+      // Check if user is still in cooldown period
       if (!canResend && now < cooldownEndTime) {
         const remainingTime = Math.ceil((cooldownEndTime - now) / 1000);
         const minutes = Math.floor(remainingTime / 60);
@@ -181,6 +163,7 @@ const SignupPage = () => {
 
       if (error) throw error;
 
+      // Update rate limiting state
       const newAttempts = resendAttempts + 1;
       const rateLimitIndex = Math.min(newAttempts - 1, RATE_LIMITS.length - 1);
       const cooldownDuration = RATE_LIMITS[rateLimitIndex];
