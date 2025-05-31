@@ -19,13 +19,13 @@ const Hero = () => {
   };
 
   return (
-    <section className="h-screen flex items-center relative overflow-hidden" id="home">
+    <section className="min-h-screen flex items-center relative overflow-hidden pt-20 md:pt-24" id="home">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 -right-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl transition-opacity duration-1000 opacity-0 animate-[fadeIn_2s_ease-in-out_forwards]"></div>
         <div className="absolute bottom-1/4 -left-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl transition-opacity duration-1000 opacity-0 animate-[fadeIn_2s_ease-in-out_0.5s_forwards]"></div>
       </div>
       
-      <div className="container mx-auto px-4 relative z-10 pt-16">
+      <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-12">
           <div className="md:w-1/2">
             <div 
